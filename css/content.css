@@ -1,0 +1,77 @@
+.todo {
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+}
+
+.section-name {
+    color: #333;
+    border-bottom: 2px #333 solid;
+    font-size: 15px;
+    padding: 10px 0;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input-task {
+    font-size: 18px;
+    color: #888;
+    border-radius: 6px;
+    border: 1px #ddd solid;
+    width: 85%;
+    height: 40px;
+    margin: 8px 0 11px 0;
+    padding: 0 0 0 8px;
+}
+
+.add-task {
+    color: #888;
+    font-size: 15px;
+    border: none;
+    background: transparent;
+    outline: none;
+    margin: 0 8px 0 10px;
+    cursor: pointer;
+}
+
+.add-task:hover {
+    color: #0FC57C;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #333;
+    font-size: 18px;
+    border-bottom: 1px #eee solid;
+    padding: 17px 4px 29px 10px;
+    margin: 0 0 13px 0;
+}
+
+.delete-button {
+    color: #888;
+    font-size: 15px;
+    border: none;
+    background: transparent;
+    outline: none;
+    float: right;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    color: #CF2323;
+}
+
+.completed-tasks .task {
+    color: #888;
+    text-decoration: line-through;
+}
+
+.checkbox {
+    margin: 0 20px 0 0;
+}
