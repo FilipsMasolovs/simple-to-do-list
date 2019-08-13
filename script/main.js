@@ -3,25 +3,20 @@ const doneTasks = document.getElementById('completedTasks');
 const input = document.getElementById('addTaskInput');
 const addTaskButton = document.getElementById('addTaskButton');
 
-let data = [{
-        value: 'Go Shopping',
-        isChecked: false,
-        id: '0',
-    },
-    {
-        value: 'Pay Bills',
-        isChecked: false,
-        id: '1',
-    },
-    {
-        value: 'See the Doctor',
-        isChecked: true,
-        id: '2',
-    }
-]
+let data = window.localStorage.toDoData
 
-data.forEach(function(item) {
-    addToDo(item.value, item.isChecked ? doneTasks : openTasks, item.isChecked, true, item.id)
+if (data) {
+    data = JSON.parse(data)
+} else {
+    data = { toDoTasks: [], doneTasks: [] };
+    window.localStorage.setItem('toDoData', JSON.stringify(data))
+}
+
+data.toDoTasks.forEach(function(item) {
+    addToDo(item.value, openTasks, false, true, item.id)
+})
+data.doneTasks.forEach(function(item) {
+    addToDo(item.value, doneTasks, true, true, item.id)
 })
 
 function addToDo(inputValue, container, isChecked, doNotPushToData, id) {
@@ -46,17 +41,20 @@ function addToDo(inputValue, container, isChecked, doNotPushToData, id) {
     addEventListenerCompleteToDos();
 
     if (!doNotPushToData) {
-        data.push({
+        data.toDoTasks.push({
             value: inputValue,
-            isChecked: isChecked,
             id: id
-        });
+        })
+
+        window.localStorage.setItem('toDoData', JSON.stringify(data))
     }
 }
 
 addTaskButton.addEventListener('click', handleAddClick);
 document.addEventListener("keyup", function() {
-    if (event.keyCode == 13) { handleAddClick() }
+    if (event.keyCode == 13) {
+        handleAddClick()
+    }
 })
 
 function handleAddClick() {
@@ -68,16 +66,6 @@ function handleAddClick() {
     input.value = '';
 }
 
-
-
-
-
-// REMOVE TO DO!!! WORKING ON THIS
-
-
-
-
-
 function addEventListenerToDeleteButtons() {
     const deleteTaskButtons = document.querySelectorAll('.delete-button');
     let currentButton;
@@ -87,30 +75,47 @@ function addEventListenerToDeleteButtons() {
     }
 }
 
-function removeToDo(inputValue, container, isChecked, doNotPushToData) {
+function removeToDo(event) {
     const deleteButton = event.currentTarget;
     const id = deleteButton.closest('.task').id;
+    const checked = deleteButton.closest('.task').querySelector('.checkbox').checked;
 
     const taskToDelete = deleteButton.closest('.task');
     taskToDelete.parentNode.removeChild(taskToDelete);
 
-    var index = data.findIndex(item => item.id === id)
-    data.splice(index, 1);
+    if (checked) {
+        let index = data.doneTasks.findIndex(item => item.id === id);
+        data.doneTasks.splice(index, 1);
+    } else {
+        let index = data.toDoTasks.findIndex(item => item.id === id);
+        data.toDoTasks.splice(index, 1);
+    }
 
-    console.log(id)
-    console.log(data)
+    window.localStorage.setItem('toDoData', JSON.stringify(data))
 }
 
 function handleCompleteToDo(event) {
     const completeToDo = event.currentTarget;
+    const id = completeToDo.closest('.task').id;
     const taskValue = completeToDo.closest('.task-value').innerText;
     if (completeToDo.checked) {
-        addToDo(taskValue, doneTasks, true);
+        addToDo(taskValue, doneTasks, true, true, id);
+        let index = data.toDoTasks.findIndex(item => item.id === id);
+        let item = data.toDoTasks[index];
+        data.doneTasks.push(item);
+        data.toDoTasks.splice(index, 1);
     } else {
-        addToDo(taskValue, openTasks, false);
+        addToDo(taskValue, openTasks, false, true, id);
+        let index = data.doneTasks.findIndex(item => item.id === id);
+        let item = data.doneTasks[index];
+        data.toDoTasks.push(item);
+        data.doneTasks.splice(index, 1);
     }
+
     const taskToDelete = completeToDo.closest('.task');
     taskToDelete.parentNode.removeChild(taskToDelete);
+
+    window.localStorage.setItem('toDoData', JSON.stringify(data))
 }
 
 function addEventListenerCompleteToDos() {
@@ -122,5 +127,5 @@ function addEventListenerCompleteToDos() {
     }
 }
 
-addEventListenerToDeleteButtons()
-addEventListenerCompleteToDos()
+addEventListenerToDeleteButtons();
+addEventListenerCompleteToDos();
